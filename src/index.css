@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { min-height: 100%; }
+  body {
+    @apply bg-canvas font-sans text-fg antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+  select, input, textarea, button { font: inherit; }
+  input[type='date'], input[type='number'] { color-scheme: dark; }
+}
+
+@layer components {
+  .card { @apply rounded-md border border-line bg-subtle; }
+  .btn {
+    @apply inline-flex min-h-[40px] items-center justify-center gap-2 rounded-md border border-line bg-overlay px-4 py-2 text-sm font-semibold text-fg transition hover:border-muted active:scale-[.98] disabled:opacity-50;
+  }
+  .btn-primary { @apply border-white/10 bg-success text-white hover:border-white/20 hover:bg-[#2ea043]; }
+  .btn-danger { @apply text-danger hover:border-danger hover:bg-danger hover:text-white; }
+  .btn-ghost { @apply border-transparent bg-transparent text-muted hover:text-fg; }
+  .input {
+    @apply min-h-[40px] w-full rounded-md border border-line bg-inset px-3 py-2 text-sm text-fg placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent;
+  }
+  .label { @apply mb-1 block text-xs font-semibold text-fg; }
+  .chip {
+    @apply inline-flex items-center whitespace-nowrap rounded-full border border-line px-3 py-1 text-xs font-medium text-muted;
+  }
+  .chip-on { @apply border-accent bg-accent/15 text-accent; }
+}
