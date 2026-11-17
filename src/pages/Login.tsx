@@ -29,7 +29,7 @@ export default function Login() {
   return (
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
       <div className="mb-6 text-center">
-        <img src="/logo.png" alt="Dança · ETA UFAL 2026" className="mx-auto mb-4 w-44" />
+        <img src="/logo.png" alt="Dança · ETA UFAL 2026" className="mx-auto mb-4 w-24" />
         <h1 className="text-2xl font-semibold">{mode === 'in' ? 'Entrar no NoRitmo' : 'Criar conta'}</h1>
         <p className="mt-1 text-sm text-muted">Constância vale mais que intensidade.</p>
       </div>
