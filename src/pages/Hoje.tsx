@@ -74,7 +74,7 @@ export default function Hoje() {
         </div>
         <ProgressBar value={doneCount} max={list.length} />
         {list.length > 0 && doneCount === list.length && (
-          <p className="mt-3 text-sm text-success-fg">Rotina completa. Constância é isso — bom trabalho!</p>
+          <p className="mt-3 text-sm text-brand-fg">Rotina completa. Constância é isso — bom trabalho!</p>
         )}
       </div>
 
@@ -100,7 +100,7 @@ export default function Hoje() {
                 >
                   <span
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border ${
-                      on ? 'border-success bg-success text-white' : 'border-muted'
+                      on ? 'border-brand bg-brand text-white' : 'border-muted'
                     }`}
                   >
                     {on && (

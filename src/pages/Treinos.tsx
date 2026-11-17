@@ -41,7 +41,7 @@ export default function Treinos() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 text-sm font-medium">
                           {SESSION_LABEL[s.type]}
-                          {s.is_minimum && <span className="chip border-success-fg/40 py-0 text-success-fg">dia mínimo</span>}
+                          {s.is_minimum && <span className="chip border-brand-fg/40 py-0 text-brand-fg">dia mínimo</span>}
                         </div>
                         <div className="truncate text-xs text-muted">
                           {[

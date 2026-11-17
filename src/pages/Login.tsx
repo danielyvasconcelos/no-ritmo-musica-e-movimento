@@ -55,7 +55,7 @@ export default function Login() {
           {busy ? 'Aguarde…' : mode === 'in' ? 'Entrar' : 'Criar conta'}
         </button>
         <ErrorText error={error} />
-        {info && <p className="rounded-md border border-success-fg/40 bg-success/10 px-3 py-2 text-sm text-success-fg">{info}</p>}
+        {info && <p className="rounded-md border border-brand-fg/40 bg-brand/10 px-3 py-2 text-sm text-brand-fg">{info}</p>}
       </form>
       <p className="mt-4 rounded-md border border-line p-3 text-center text-sm text-muted">
         {mode === 'in' ? 'Primeira vez aqui?' : 'Já tem conta?'}{' '}

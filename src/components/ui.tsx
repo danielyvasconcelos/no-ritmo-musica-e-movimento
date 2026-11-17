@@ -23,12 +23,12 @@ export function Icon({ name, size = 18, className = '' }: { name: keyof typeof p
   )
 }
 
-export function ProgressBar({ value, max, tone = 'success' }: { value: number; max: number; tone?: 'success' | 'accent' }) {
+export function ProgressBar({ value, max, tone = 'brand' }: { value: number; max: number; tone?: 'brand' | 'accent' }) {
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0
   return (
     <div className="h-2 w-full overflow-hidden rounded-full bg-overlay" role="progressbar" aria-valuenow={value} aria-valuemax={max}>
       <div
-        className={`h-full rounded-full transition-all duration-300 ${tone === 'success' ? 'bg-success-fg' : 'bg-accent'}`}
+        className={`h-full rounded-full transition-all duration-300 ${tone === 'brand' ? 'bg-brand-fg' : 'bg-accent'}`}
         style={{ width: `${pct}%` }}
       />
     </div>

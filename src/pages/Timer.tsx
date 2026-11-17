@@ -130,7 +130,7 @@ export default function Timer() {
             cy="100"
             r={R}
             fill="none"
-            stroke={finished ? '#3fb950' : '#2f81f7'}
+            stroke={finished ? '#a371f7' : '#2f81f7'}
             strokeWidth="10"
             strokeLinecap="round"
             strokeDasharray={C}
@@ -144,7 +144,7 @@ export default function Timer() {
         </div>
       </div>
 
-      <p className={`mb-4 min-h-[24px] text-sm font-semibold ${notice ? 'text-attention' : 'text-success-fg'}`}>
+      <p className={`mb-4 min-h-[24px] text-sm font-semibold ${notice ? 'text-attention' : 'text-brand-fg'}`}>
         {finished ? 'Feito! Marcado no checklist.' : notice}
       </p>
 
@@ -178,7 +178,7 @@ export default function Timer() {
         Contar por lado (tempo × 2, com aviso para trocar)
       </label>
       {isLast && finished && (
-        <p className="mt-6 text-sm text-success-fg">Fim da rotina. Volte para “Hoje” para ver o progresso.</p>
+        <p className="mt-6 text-sm text-brand-fg">Fim da rotina. Volte para “Hoje” para ver o progresso.</p>
       )}
     </div>
   )

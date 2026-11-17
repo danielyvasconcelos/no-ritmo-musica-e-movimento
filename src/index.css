@@ -18,7 +18,7 @@
   .btn {
     @apply inline-flex min-h-[40px] items-center justify-center gap-2 rounded-md border border-line bg-overlay px-4 py-2 text-sm font-semibold text-fg transition hover:border-muted active:scale-[.98] disabled:opacity-50;
   }
-  .btn-primary { @apply border-white/10 bg-success text-white hover:border-white/20 hover:bg-[#2ea043]; }
+  .btn-primary { @apply border-white/10 bg-brand text-white hover:border-white/20 hover:bg-[#9e6cf0]; }
   .btn-danger { @apply text-danger hover:border-danger hover:bg-danger hover:text-white; }
   .btn-ghost { @apply border-transparent bg-transparent text-muted hover:text-fg; }
   .input {
