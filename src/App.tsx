@@ -9,7 +9,6 @@ import Layout from './components/Layout'
 import Login from './pages/Login'
 import ResetPassword from './pages/ResetPassword'
 import Hoje from './pages/Hoje'
-import Timer from './pages/Timer'
 import Aulas from './pages/Aulas'
 import AulaForm from './pages/AulaForm'
 import AulaDetalhe from './pages/AulaDetalhe'
@@ -52,7 +51,6 @@ function Authed() {
       if (cancelled) return
       stopPersist = startPersist(qc, uid)
       setOnDrained(() => {
-        void qc.invalidateQueries({ queryKey: ['checks'] })
         void qc.invalidateQueries({ queryKey: ['day_checks'] })
         void qc.invalidateQueries({ queryKey: ['sessions'] })
       })
@@ -72,7 +70,6 @@ function Authed() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Hoje />} />
-        <Route path="/hoje/timer" element={<Timer />} />
         <Route path="/aulas" element={<Aulas />} />
         <Route path="/aulas/nova" element={<AulaForm />} />
         <Route path="/aulas/:id" element={<AulaDetalhe />} />

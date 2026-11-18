@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 import { useUserId } from './auth'
 import { addDays, browserTz, todayIn } from './dates'
 import { enqueue, type SessionRow } from './offline'
-import type { Check, DayCheck, Lesson, LessonMark, Profile, Routine, RoutineStretch, Session, Stretch } from './types'
+import type { DayCheck, Lesson, LessonMark, Profile, Routine, RoutineStretch, Session, Stretch } from './types'
 
 type Res<T> = PromiseLike<{ data: T | null; error: { message: string } | null }>
 
@@ -140,34 +140,6 @@ export function useSetRoutineStretches() {
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['routine_stretches'] }),
   })
-}
-
-/* ---------- Checks do dia ---------- */
-export const useChecks = () =>
-  useQuery({
-    queryKey: ['checks'],
-    queryFn: () =>
-      fetchAll<Check>((a, b) =>
-        supabase.from('stretch_checks').select('*').gte('date', since()).order('date').order('id').range(a, b),
-      ),
-  })
-
-/** Marca/desmarca com atualização otimista; funciona offline (fila local). */
-export function useToggleCheck() {
-  const qc = useQueryClient()
-  const uid = useUserId()
-  return useCallback(
-    (stretch_id: string, date: string, on: boolean) => {
-      const done_at = new Date().toISOString()
-      qc.setQueryData<Check[]>(['checks'], (old = []) => {
-        const rest = old.filter((c) => !(c.stretch_id === stretch_id && c.date === date))
-        return on ? [...rest, { user_id: uid, stretch_id, date, done_at }] : rest
-      })
-      if (on) enqueue({ kind: 'check_on', user_id: uid, stretch_id, date, done_at })
-      else enqueue({ kind: 'check_off', user_id: uid, stretch_id, date })
-    },
-    [qc, uid],
-  )
 }
 
 /* ---------- "Me alonguei hoje" (check do dia) ---------- */
