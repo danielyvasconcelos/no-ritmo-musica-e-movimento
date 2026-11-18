@@ -7,6 +7,7 @@ import { clearPersisted, restoreCache, startPersist } from './lib/persist'
 import { loadQueue, setOnDrained, startSync } from './lib/offline'
 import Layout from './components/Layout'
 import Login from './pages/Login'
+import ResetPassword from './pages/ResetPassword'
 import Hoje from './pages/Hoje'
 import Timer from './pages/Timer'
 import Aulas from './pages/Aulas'
@@ -87,7 +88,7 @@ function Authed() {
 }
 
 export default function App() {
-  const { user, loading } = useAuth()
+  const { user, loading, recovery } = useAuth()
   const qc = useQueryClient()
 
   // Ao sair, limpa dados locais do usuário anterior.
@@ -101,5 +102,6 @@ export default function App() {
   if (!isConfigured) return <Setup />
   if (loading) return <Splash />
   if (!user) return <Login />
+  if (recovery) return <ResetPassword />
   return <Authed />
 }
