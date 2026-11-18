@@ -95,3 +95,15 @@ begin
       'create policy "owner_all" on %I for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid())', t);
   end loop;
 end $$;
+
+-- "Me alonguei hoje": check do dia, sem precisar marcar item por item.
+create table if not exists stretch_days (
+  user_id uuid not null references auth.users(id) on delete cascade default auth.uid(),
+  date date not null,
+  done_at timestamptz not null default now(),
+  primary key (user_id, date)
+);
+alter table stretch_days enable row level security;
+drop policy if exists "owner_all" on stretch_days;
+create policy "owner_all" on stretch_days for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());

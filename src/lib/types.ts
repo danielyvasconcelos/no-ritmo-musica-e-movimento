@@ -14,6 +14,7 @@ export type Stretch = {
 
 export type Routine = { id: string; user_id: string; name: string; position: number }
 export type RoutineStretch = { user_id: string; routine_id: string; stretch_id: string; position: number }
+export type DayCheck = { user_id: string; date: string }
 export type Check = { id?: string; user_id: string; stretch_id: string; date: string; done_at: string }
 
 export type LessonCategory = 'aquecimento' | 'tecnica' | 'coreografia' | 'alongamento'

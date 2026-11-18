@@ -7,6 +7,8 @@ export type SessionRow = Omit<Session, 'created_at'> & { created_at?: string }
 export type Op =
   | { id: string; kind: 'check_on'; user_id: string; stretch_id: string; date: string; done_at: string }
   | { id: string; kind: 'check_off'; user_id: string; stretch_id: string; date: string }
+  | { id: string; kind: 'day_on'; user_id: string; date: string }
+  | { id: string; kind: 'day_off'; date: string }
   | { id: string; kind: 'session_upsert'; row: SessionRow }
   | { id: string; kind: 'session_delete'; session_id: string }
 
@@ -69,6 +71,16 @@ async function run(op: Op): Promise<Err> {
     }
     case 'check_off': {
       const { error } = await supabase.from('stretch_checks').delete().eq('stretch_id', op.stretch_id).eq('date', op.date)
+      return error
+    }
+    case 'day_on': {
+      const { error } = await supabase
+        .from('stretch_days')
+        .upsert({ user_id: op.user_id, date: op.date }, { onConflict: 'user_id,date' })
+      return error
+    }
+    case 'day_off': {
+      const { error } = await supabase.from('stretch_days').delete().eq('date', op.date)
       return error
     }
     case 'session_upsert': {

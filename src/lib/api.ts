@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 import { useUserId } from './auth'
 import { addDays, browserTz, todayIn } from './dates'
 import { enqueue, type SessionRow } from './offline'
-import type { Check, Lesson, LessonMark, Profile, Routine, RoutineStretch, Session, Stretch } from './types'
+import type { Check, DayCheck, Lesson, LessonMark, Profile, Routine, RoutineStretch, Session, Stretch } from './types'
 
 type Res<T> = PromiseLike<{ data: T | null; error: { message: string } | null }>
 
@@ -165,6 +165,30 @@ export function useToggleCheck() {
       })
       if (on) enqueue({ kind: 'check_on', user_id: uid, stretch_id, date, done_at })
       else enqueue({ kind: 'check_off', user_id: uid, stretch_id, date })
+    },
+    [qc, uid],
+  )
+}
+
+/* ---------- "Me alonguei hoje" (check do dia) ---------- */
+export const useDayChecks = () =>
+  useQuery({
+    queryKey: ['day_checks'],
+    queryFn: () =>
+      fetchAll<DayCheck>((a, b) => supabase.from('stretch_days').select('*').gte('date', since()).order('date').range(a, b)),
+  })
+
+export function useToggleDay() {
+  const qc = useQueryClient()
+  const uid = useUserId()
+  return useCallback(
+    (date: string, on: boolean) => {
+      qc.setQueryData<DayCheck[]>(['day_checks'], (old = []) => {
+        const rest = old.filter((d) => d.date !== date)
+        return on ? [...rest, { user_id: uid, date }] : rest
+      })
+      if (on) enqueue({ kind: 'day_on', user_id: uid, date })
+      else enqueue({ kind: 'day_off', date })
     },
     [qc, uid],
   )

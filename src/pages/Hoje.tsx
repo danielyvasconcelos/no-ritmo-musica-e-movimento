@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useChecks, useRoutines, useRoutineStretches, useSaveSession, useSessions, useStretches, useToggleCheck } from '../lib/api'
+import { useChecks, useDayChecks, useRoutines, useRoutineStretches, useSaveSession, useSessions, useStretches, useToggleCheck, useToggleDay } from '../lib/api'
 import { useToday } from '../hooks/useToday'
 import { stretchesForRoutine, useActiveRoutine } from '../hooks/useActiveRoutine'
 import { fmtLong } from '../lib/dates'
@@ -14,6 +14,8 @@ export default function Hoje() {
   const checks = useChecks()
   const sessions = useSessions()
   const toggle = useToggleCheck()
+  const dayChecks = useDayChecks()
+  const toggleDay = useToggleDay()
   const saveSession = useSaveSession()
   const [routineId, setRoutineId] = useActiveRoutine()
   const [armed, setArmed] = useState(false)
@@ -27,6 +29,8 @@ export default function Hoje() {
     [checks.data, today],
   )
   const doneCount = list.filter((s) => done.has(s.id)).length
+  const dayMarked = (dayChecks.data ?? []).some((d) => d.date === today)
+  const stretched = dayMarked || doneCount > 0
   const hasMinimum = (sessions.data ?? []).some((s) => s.date === today && s.is_minimum)
 
   useEffect(() => {
@@ -67,9 +71,29 @@ export default function Hoje() {
         </div>
       )}
 
+      <button
+        onClick={() => toggleDay(today, !dayMarked)}
+        aria-pressed={stretched}
+        className={`mb-4 flex w-full items-center gap-3 rounded-md border p-4 text-left transition active:scale-[.99] ${
+          stretched ? 'border-brand bg-brand/15' : 'border-line bg-subtle hover:border-muted'
+        }`}
+      >
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${stretched ? 'border-brand bg-brand text-white' : 'border-muted'}`}>
+          {stretched && (
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" /></svg>
+          )}
+        </span>
+        <span>
+          <span className="block text-base font-semibold">{stretched ? 'Me alonguei hoje' : 'Me alonguei hoje?'}</span>
+          <span className="block text-xs text-muted">
+            {stretched ? 'Dia contado na sua constância.' : 'Toque quando terminar. Não precisa marcar item por item.'}
+          </span>
+        </span>
+      </button>
+
       <div className="card mb-4 p-4">
         <div className="mb-2 flex items-baseline justify-between">
-          <span className="text-sm font-semibold">Progresso do dia</span>
+          <span className="text-sm font-semibold">Itens da rotina <span className="font-normal text-muted">(opcional)</span></span>
           <span className="font-mono text-sm text-muted">{doneCount} de {list.length} feitos</span>
         </div>
         <ProgressBar value={doneCount} max={list.length} />

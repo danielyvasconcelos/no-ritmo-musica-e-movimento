@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
-import { useChecks, useProfile, useSessions } from '../lib/api'
+import { useChecks, useDayChecks, useProfile, useSessions } from '../lib/api'
 import { useToday } from '../hooks/useToday'
 import { addDays, computeStreaks, daysInMonth, monthLabel, weekStart, weekdayMon, ymd } from '../lib/dates'
 import { Icon, PageTitle, ProgressBar } from '../components/ui'
 
-type Day = { minutes: number; sessions: number; checks: number }
+type Day = { minutes: number; sessions: number; checks: number; stretched: boolean }
 const LEVEL = ['bg-contrib-0', 'bg-contrib-1', 'bg-contrib-2', 'bg-contrib-3', 'bg-contrib-4']
 const WEEKDAYS = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D']
 
@@ -12,6 +12,7 @@ export default function Progresso() {
   const today = useToday()
   const sessions = useSessions()
   const checks = useChecks()
+  const dayChecks = useDayChecks()
   const profile = useProfile()
   const goal = profile.data?.weekly_goal_days ?? 5
 
@@ -23,7 +24,7 @@ export default function Progresso() {
 
   const days = useMemo(() => {
     const m = new Map<string, Day>()
-    const get = (d: string) => m.get(d) ?? { minutes: 0, sessions: 0, checks: 0 }
+    const get = (d: string): Day => m.get(d) ?? { minutes: 0, sessions: 0, checks: 0, stretched: false }
     for (const s of sessions.data ?? []) {
       const d = get(s.date)
       m.set(s.date, { ...d, minutes: d.minutes + s.duration_min, sessions: d.sessions + 1 })
@@ -32,8 +33,9 @@ export default function Progresso() {
       const d = get(c.date)
       m.set(c.date, { ...d, checks: d.checks + 1 })
     }
+    for (const c of dayChecks.data ?? []) m.set(c.date, { ...get(c.date), stretched: true })
     return m
-  }, [sessions.data, checks.data])
+  }, [sessions.data, checks.data, dayChecks.data])
 
   const active = useMemo(() => new Set(days.keys()), [days])
   const { current, best } = useMemo(() => computeStreaks(active, today), [active, today])
@@ -62,7 +64,7 @@ export default function Progresso() {
 
   const level = (d?: Day) => {
     if (!d) return 0
-    return Math.min(4, 1 + (d.sessions > 0 ? 1 : 0) + (d.checks > 0 ? 1 : 0) + (d.minutes >= 30 ? 1 : 0))
+    return Math.min(4, 1 + (d.sessions > 0 ? 1 : 0) + (d.checks > 0 || d.stretched ? 1 : 0) + (d.minutes >= 30 ? 1 : 0))
   }
 
   return (

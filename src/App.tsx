@@ -52,6 +52,7 @@ function Authed() {
       stopPersist = startPersist(qc, uid)
       setOnDrained(() => {
         void qc.invalidateQueries({ queryKey: ['checks'] })
+        void qc.invalidateQueries({ queryKey: ['day_checks'] })
         void qc.invalidateQueries({ queryKey: ['sessions'] })
       })
       stopSync = startSync()
