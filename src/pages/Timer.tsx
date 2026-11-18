@@ -54,15 +54,34 @@ export default function Timer() {
   const [finished, setFinished] = useState(false)
   const [notice, setNotice] = useState('')
   const wake = useRef<WakeLockSentinel | null>(null)
+  const [autoNext, setAutoNext] = useState(() => localStorage.getItem('nr-auto-next') !== '0')
+  const [gap, setGap] = useState<number | null>(null)
+  const autoStart = useRef(false)
+  const isLast = idx >= list.length - 1
 
   // Reinicia ao trocar de exercício.
   useEffect(() => {
     setRemaining(current?.duration_seconds ?? DEFAULT_SECONDS)
     setSide(1)
     setFinished(false)
-    setRunning(false)
+    setRunning(autoStart.current) // segue direto para o próximo, sem clicar em "Começar"
+    autoStart.current = false
+    setGap(null)
     setNotice('')
   }, [current?.id, current?.duration_seconds])
+
+  // Pausa curta entre exercícios; depois começa o próximo sozinho.
+  useEffect(() => {
+    if (gap === null) return
+    if (gap <= 0) {
+      autoStart.current = true
+      setGap(null)
+      setIdx((i) => i + 1)
+      return
+    }
+    const t = window.setTimeout(() => setGap((g) => (g === null ? null : g - 1)), 1000)
+    return () => window.clearTimeout(t)
+  }, [gap])
 
   useEffect(() => {
     if (!running) return
@@ -82,8 +101,9 @@ export default function Timer() {
       setFinished(true)
       setNotice('')
       if (!doneSet.has(current.id)) toggle(current.id, today, true)
+      if (autoNext && !isLast) setGap(3)
     }
-  }, [remaining, running, current, perSide, side, total, doneSet, toggle, today])
+  }, [remaining, running, current, perSide, side, total, doneSet, toggle, today, autoNext, isLast])
 
   // Mantém a tela acesa durante o timer.
   useEffect(() => {
@@ -108,7 +128,6 @@ export default function Timer() {
   const pct = total > 0 ? 1 - Math.max(0, remaining) / total : 1
   const R = 90
   const C = 2 * Math.PI * R
-  const isLast = idx >= list.length - 1
 
   return (
     <div className="text-center">
@@ -145,7 +164,11 @@ export default function Timer() {
       </div>
 
       <p className={`mb-4 min-h-[24px] text-sm font-semibold ${notice ? 'text-attention' : 'text-brand-fg'}`}>
-        {finished ? 'Feito! Marcado no checklist.' : notice}
+        {gap !== null && list[idx + 1]
+          ? `Feito! Próximo em ${gap}s: ${list[idx + 1].name}`
+          : finished
+            ? 'Feito! Marcado no checklist.'
+            : notice}
       </p>
 
       <div className="grid grid-cols-2 gap-3">
@@ -154,11 +177,16 @@ export default function Timer() {
             {running ? 'Pausar' : remaining < total ? 'Continuar' : 'Começar'}
           </button>
         ) : (
-          <button className="btn" onClick={() => { setRemaining(total); setSide(1); setFinished(false) }}>Repetir</button>
+          <button className="btn" onClick={() => { setGap(null); setRemaining(total); setSide(1); setFinished(false) }}>Repetir</button>
         )}
         <button
           className={`btn ${finished ? 'btn-primary' : ''}`}
-          onClick={() => (isLast ? undefined : setIdx(idx + 1))}
+          onClick={() => {
+            if (isLast) return
+            autoStart.current = autoNext && (running || finished)
+            setGap(null)
+            setIdx(idx + 1)
+          }}
           disabled={isLast}
         >
           {isLast ? 'Último' : 'Próximo'}
@@ -176,6 +204,19 @@ export default function Timer() {
           className="h-4 w-4 accent-[#2f81f7]"
         />
         Contar por lado (tempo × 2, com aviso para trocar)
+      </label>
+      <label className="mt-2 flex items-center justify-center gap-2 text-sm text-muted">
+        <input
+          type="checkbox"
+          checked={autoNext}
+          onChange={(e) => {
+            setAutoNext(e.target.checked)
+            localStorage.setItem('nr-auto-next', e.target.checked ? '1' : '0')
+            if (!e.target.checked) setGap(null)
+          }}
+          className="h-4 w-4 accent-[#2f81f7]"
+        />
+        Continuar sozinho para o próximo alongamento
       </label>
       {isLast && finished && (
         <p className="mt-6 text-sm text-brand-fg">Fim da rotina. Volte para “Hoje” para ver o progresso.</p>
