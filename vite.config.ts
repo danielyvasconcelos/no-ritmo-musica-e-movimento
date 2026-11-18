@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['apple-touch-icon.png', 'logo.png', 'emblem.png'],
+      includeAssets: ['apple-touch-icon.png', 'logo.png'],
       manifest: {
         name: 'NoRitmo',
         short_name: 'NoRitmo',

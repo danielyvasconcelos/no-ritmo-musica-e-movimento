@@ -4,3 +4,4 @@ dist
 .env.local
 *.local
 public/icon-maskable.svg
+public/emblem.png

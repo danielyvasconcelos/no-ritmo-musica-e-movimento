@@ -16,7 +16,7 @@ export default function Layout() {
     <div className="mx-auto flex min-h-screen max-w-xl flex-col">
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-subtle/95 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] backdrop-blur">
         <div className="flex items-center gap-2">
-          <img src="/emblem.png" alt="" className="h-7 w-auto" />
+          <img src="/logo.png" alt="Dança · ETA UFAL 2026" className="h-10 w-auto" />
           <span className="font-semibold tracking-tight">NoRitmo</span>
         </div>
         {!online ? (
